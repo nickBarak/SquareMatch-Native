@@ -1,9 +1,10 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {InitializedContext} from '../store/contexts/InitializedContext';
 import {SquaresRemainingContext} from '../store/contexts/SquaresRemainingContext';
 import {ColorStatesContext} from '../store/contexts/ColorStatesContext';
 import uuid from 'uuid-random';
+import {TimeContext} from '../store/contexts/TimeContext';
 
 const rgbaValues = [
   [200, 0, 0],
@@ -12,12 +13,16 @@ const rgbaValues = [
   [200, 200, 0],
   [200, 0, 200],
   [0, 200, 200],
+  [170, 170, 170],
 ];
 
 const Square = ({index, init}) => {
   const [initialized, setInitialized] = useContext(InitializedContext);
   const [squaresRemaining] = useContext(SquaresRemainingContext);
-  const {colorStates, updateColorStates} = useContext(ColorStatesContext);
+  const {colorStates, initializeColorStates, updateColorStates} = useContext(
+    ColorStatesContext,
+  );
+  const {time} = useContext(TimeContext);
 
   function randomizeColor() {
     let randNum = Math.floor(Math.random() * 6);
@@ -27,10 +32,14 @@ const Square = ({index, init}) => {
     updateColorStates(index, randNum);
   }
 
-  useEffect(() => {
-    initialized && updateColorStates(index, init);
-    return undefined;
-  }, [initialized]);
+  function initializeGame() {
+    updateColorStates(index, init, true);
+    initializeColorStates(
+      index === 0 ? 15 : index - 1,
+      index === 15 ? 0 : index + 1,
+    );
+    setInitialized(true);
+  }
 
   const getColor = (state) => `rgba(${rgbaValues[state].join(', ')}, 1)`;
 
@@ -38,13 +47,11 @@ const Square = ({index, init}) => {
     <View
       key={uuid()}
       onTouchStart={() =>
-        !initialized ? setInitialized(true) : randomizeColor()
+        !initialized ? initializeGame() : squaresRemaining && randomizeColor()
       }
       style={{
         ...styles.Square,
-        backgroundColor: `${
-          !initialized ? '#aaa' : getColor(colorStates[index])
-        }`,
+        backgroundColor: `${getColor(colorStates[index])}`,
       }}>
       <Text style={styles.text}>{squaresRemaining}</Text>
     </View>

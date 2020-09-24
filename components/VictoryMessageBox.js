@@ -29,26 +29,26 @@ const styles = StyleSheet.create({
   VictoryMessageBox: {
     position: 'absolute',
     top: '29%',
-    left: '33%',
+    left: '35%',
     zIndex: 5,
     backgroundColor: 'white',
-    height: 150,
-    width: 150,
+    height: 130,
+    width: 130,
     borderRadius: 12,
     alignItems: 'center',
   },
   victoryText: {
-    fontSize: 30,
+    fontSize: 26,
     color: 'red',
     fontFamily: 'Helvetica',
     marginTop: 4,
   },
   finishedIn: {
-    marginTop: 55,
-    fontSize: 12,
+    marginTop: 45,
+    fontSize: 11.25,
   },
   bestTime: {
-    fontSize: 10,
+    fontSize: 9.25,
     marginTop: 2,
   },
 });

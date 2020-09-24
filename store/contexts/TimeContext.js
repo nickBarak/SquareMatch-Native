@@ -163,20 +163,7 @@ export function TimeContextProvider({children}) {
   async function stopTimer() {
     timerIntervals.forEach((interval) => clearInterval(interval));
 
-    const permissionGranted = PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: 'Permission to Store Times',
-        message: 'Allow SquareMatch to save your times in local storage?',
-        buttonPositive: 'Ok',
-        buttonNegative: 'No',
-        buttonNeutral: 'Ask Later',
-      },
-    );
-
-    if (permissionGranted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Permission to store data received');
-
+    try {
       let userData = await AsyncStorage.getItem(user);
       !userData && (await AsyncStorage.setItem(user, '59:59:99'));
 
@@ -186,11 +173,13 @@ export function TimeContextProvider({children}) {
           (a, b) => convertTimeStringToNumber(a) - convertTimeStringToNumber(b),
         )[0],
       );
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-      function convertTimeStringToNumber(timeString) {
-        return Number(timeString.replace(/:/g, '').replace(/0/g, ''));
-      }
-    } else console.log('Permission to store data denied');
+  function convertTimeStringToNumber(timeString) {
+    return Number(timeString.replace(/:/g, '').replace(/0/g, ''));
   }
 
   return (
